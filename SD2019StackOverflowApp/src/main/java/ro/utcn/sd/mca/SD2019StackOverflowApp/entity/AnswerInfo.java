@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
+@Getter
 public class AnswerInfo {
-    @Getter
     private Answer answer;
-    @Getter
+    private String author;
     private Integer votes;
 }

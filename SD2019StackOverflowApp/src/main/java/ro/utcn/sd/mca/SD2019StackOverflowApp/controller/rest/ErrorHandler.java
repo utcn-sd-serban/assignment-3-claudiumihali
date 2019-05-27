@@ -6,8 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ro.utcn.sd.mca.SD2019StackOverflowApp.dto.ErrorDTO;
-import ro.utcn.sd.mca.SD2019StackOverflowApp.exception.DuplicateUsernameException;
-import ro.utcn.sd.mca.SD2019StackOverflowApp.exception.InvalidSOUserIdException;
+import ro.utcn.sd.mca.SD2019StackOverflowApp.exception.*;
 
 @Component
 @RestControllerAdvice
@@ -19,8 +18,26 @@ public class ErrorHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidAnswerIdException.class)
+    public ErrorDTO handleInvalidAnswerIdException(InvalidAnswerIdException e) {
+        return new ErrorDTO(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidQuestionIdException.class)
+    public ErrorDTO handleInvalidQuestionIdException(InvalidQuestionIdException e) {
+        return new ErrorDTO(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DuplicateUsernameException.class)
     public ErrorDTO handleDuplicateUsernameException(DuplicateUsernameException e) {
+        return new ErrorDTO(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CanEditOnlyOwnAnswersException.class)
+    public ErrorDTO handleCanEditOnlyOwnAnswersException(CanEditOnlyOwnAnswersException e) {
         return new ErrorDTO(e.getMessage());
     }
 }

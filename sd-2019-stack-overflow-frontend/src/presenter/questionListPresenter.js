@@ -1,5 +1,6 @@
 import sOUserModel from "../model/sOUserModel";
 import questionModel from "../model/questionModel";
+import answerModel from "../model/answerModel";
 
 class QuestionListPresenter {
     onInit() {
@@ -80,7 +81,9 @@ class QuestionListPresenter {
     }
 
     onExpandQuestion(questionId) {
-        window.location.assign("#/answers/" + questionId);
+        answerModel.loadQuestionAnswers(questionId).then(() => {
+            window.location.assign("#/questions/" + questionId + "/answers");
+        });
     }
 }
 

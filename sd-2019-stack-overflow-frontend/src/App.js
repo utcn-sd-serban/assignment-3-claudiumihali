@@ -9,7 +9,7 @@ const App = () => (
     <HashRouter>
       <Switch>
         <Route exact={true} component={SmartQuestionList} path="/:titleFilter?" />
-        <Route exact={true} component={SmartAnswerList} path="/answers/:questionId" />
+        <Route exact={true} component={SmartAnswerList} path="/questions/:questionId/answers" />
       </Switch>
     </HashRouter>
   </div>

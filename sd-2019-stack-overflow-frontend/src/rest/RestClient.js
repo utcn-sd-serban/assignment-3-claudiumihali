@@ -82,6 +82,43 @@ class RestClient {
             }
         }).then(response => response.json());
     }
+
+    getQuestionAnswers(questionId) {
+        return fetch(BASE_URL + "/questions/" + questionId + "/answers", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(response => response.json());
+    }
+
+    addAnswer(questionId, text) {
+        return fetch(BASE_URL + "/questions/" + questionId + "/answers", {
+            method: "POST",
+            body: JSON.stringify({text}),
+            headers: {
+                "Authorization": this.authorization,
+                "Content-Type": "application/json"
+            }
+        }).then(response => response.json());
+    }
+
+    editAnswer(questionId, answerId, text) {
+        return fetch(BASE_URL + "/questions/" + questionId + "/answers/" + answerId, {
+            method: "PUT",
+            body: JSON.stringify({text}),
+            headers: {
+                "Authorization": this.authorization,
+                "Content-Type": "application/json"
+            }
+        }).then(response => {
+            if (!response.ok) {
+                return null;
+            } else {
+                return response.json();
+            }
+        });
+    }
 }
 
 const client = new RestClient();

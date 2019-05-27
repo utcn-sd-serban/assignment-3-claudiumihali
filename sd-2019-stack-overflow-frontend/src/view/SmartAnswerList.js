@@ -74,6 +74,7 @@ export default class SmartAnswerList extends Component {
                         onChangeEditedAnswerText={answerListPresenter.onChangeEditedAnswerText}
                         onConfirmEditAnswer={answerListPresenter.onConfirmEditAnswer}
                         onDeleteAnswer={answerListPresenter.onDeleteAnswer}
+                        questionId={this.state.question.id}
                     />
                     :
                     <EditAnswerModal active={false} editedAnswer={this.state.editedAnswer} />

@@ -1,7 +1,7 @@
 import React from "react";
 
 const EditAnswerModal = ( {active, onCloseEditAnswerModal, editedAnswer, onChangeEditedAnswerText,
-    onConfirmEditAnswer, onDeleteAnswer} ) => (
+    onConfirmEditAnswer, onDeleteAnswer, questionId} ) => (
     <div className={"modal" + (active ? " is-active" : "")}>
         <div className="modal-background"></div>
         <div className="modal-card">
@@ -19,7 +19,7 @@ const EditAnswerModal = ( {active, onCloseEditAnswerModal, editedAnswer, onChang
                 </div>
             </section>
             <footer className="modal-card-foot">
-                <button className="button is-success" onClick={() => onConfirmEditAnswer()}>Edit</button>
+                <button className="button is-success" onClick={() => onConfirmEditAnswer(questionId)}>Edit</button>
                 <button className="button is-danger" onClick={() => onDeleteAnswer()}>Delete</button>
             </footer>
         </div>

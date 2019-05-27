@@ -108,7 +108,7 @@ class ConsoleCommandHandler {
     }
 
     private void handleLogIn() {
-        System.out.println("Enter your author: ");
+        System.out.println("Enter your username: ");
         String username = scanner.next().trim();
         System.out.println("Enter your password: ");
         String password = scanner.next().trim();
@@ -123,7 +123,7 @@ class ConsoleCommandHandler {
     }
 
     private void handleSignUp() {
-        System.out.println("Enter your preferred author: ");
+        System.out.println("Enter your preferred username: ");
         String username = scanner.next().trim();
         System.out.println("Enter your preferred password: ");
         String password = scanner.next().trim();
@@ -274,8 +274,8 @@ class ConsoleCommandHandler {
         System.out.println("Enter answer text: ");
         String text = scanner.next().trim();
         try {
-            Answer a = answerManagementService.addAnswer(questionId, loggedInUserId, text);
-            System.out.println("Created new answer: " + a.toString());
+            AnswerInfo a = answerManagementService.addAnswer(questionId, loggedInUserId, text);
+            System.out.println("Created new answer: " + a.getAnswer().toString());
         } catch (InvalidQuestionIdException e) {
             System.out.println(e.getMessage());
         } catch (InvalidSOUserIdException e) {
@@ -325,9 +325,9 @@ class ConsoleCommandHandler {
         System.out.println("Enter new answer text: ");
         String text = scanner.next().trim();
         try {
-            Optional<Answer> a = answerManagementService.editAnswer(loggedInUserId, answerId, text);
+            Optional<AnswerInfo> a = answerManagementService.editAnswer(loggedInUserId, answerId, text);
             if (a.isPresent()) {
-                System.out.println("Created new Answer: " + a.get().toString());
+                System.out.println("Created new Answer: " + a.get().getAnswer().toString());
             } else {
                 System.out.println("You cannot edit that answer!");
             }

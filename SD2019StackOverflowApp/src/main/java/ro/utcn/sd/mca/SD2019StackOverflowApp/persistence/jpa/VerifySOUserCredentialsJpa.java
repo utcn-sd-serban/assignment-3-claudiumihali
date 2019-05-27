@@ -20,7 +20,7 @@ class VerifySOUserCredentialsJpa implements JpaSpecification<SOUser> {
         CriteriaQuery<SOUser> query = builder.createQuery(SOUser.class);
         Root<SOUser> root = query.from(SOUser.class);
         query.select(root);
-        query.where(builder.equal(root.get("author"), username), builder.equal(root.get("password"), password));
+        query.where(builder.equal(root.get("username"), username), builder.equal(root.get("password"), password));
         return query;
     }
 }

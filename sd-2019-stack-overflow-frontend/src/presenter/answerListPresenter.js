@@ -28,12 +28,7 @@ class AnswerListPresenter {
             window.alert("You must be logged in to add answers!");
             return;
         }
-        var today = new Date();
-        var date = today.getDate()+'/'+(today.getMonth()+1)+'/'+today.getFullYear();
-        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-        var dateTime = date+' '+time;
-        answerModel.addAnswer(answerModel.state.newAnswer.id, questionId, sOUserModel.state.loggedInUsername,
-            answerModel.state.newAnswer.text, dateTime, answerModel.state.newAnswer.voteScore);
+        answerModel.addAnswer(questionId, answerModel.state.newAnswer.text);
     }
 
     onEditQuestion(question) {
@@ -64,8 +59,13 @@ class AnswerListPresenter {
         answerModel.changeEditedAnswerText(newText);
     }
 
-    onConfirmEditAnswer() {
-        answerModel.editAnswer();
+    onConfirmEditAnswer(questionId) {
+        answerModel.editAnswer(questionId, answerModel.state.editedAnswer.id, answerModel.state.editedAnswer.text)
+            .then((success) => {
+                if (!success) {
+                    window.alert("You can edit only your own answers!");
+                }
+            });
     }
 
     onDeleteAnswer() {

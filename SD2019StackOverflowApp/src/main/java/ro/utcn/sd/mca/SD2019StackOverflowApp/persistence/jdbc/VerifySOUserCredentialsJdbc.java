@@ -17,7 +17,7 @@ class VerifySOUserCredentialsJdbc implements JdbcSpecification<SOUser> {
 
     @Override
     public String getSqlCommand() {
-        return "SELECT * FROM stack_overflow_user WHERE author=? AND password=?";
+        return "SELECT * FROM stack_overflow_user WHERE username=? AND password=?";
     }
 
     @Override
@@ -31,6 +31,6 @@ class VerifySOUserCredentialsJdbc implements JdbcSpecification<SOUser> {
     @Override
     public RowMapper getRowMapper() {
         return ((resultSet, i) -> new SOUser(resultSet.getInt("stack_overflow_user_id"),
-                resultSet.getString("author"), resultSet.getString("password")));
+                resultSet.getString("username"), resultSet.getString("password")));
     }
 }

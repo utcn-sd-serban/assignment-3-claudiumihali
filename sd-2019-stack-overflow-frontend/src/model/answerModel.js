@@ -1,4 +1,5 @@
 import { EventEmitter } from "events";
+import client from "../rest/RestClient";
 
 const createAnswer = (id, questionId, author, text, creationDateTime, voteScore) => (
     {id, questionId, author, text, creationDateTime, voteScore}
@@ -8,15 +9,21 @@ class AnswerModel extends EventEmitter {
     constructor() {
         super();
         this.state = {
-            answers: [
-                createAnswer(1, 1, "u2", "a1", "11/11/11 11:11:11", -4),
-                createAnswer(2, 1, "u1", "a2", "11/11/11 11:11:11", 4),
-                createAnswer(3, 2, "u3", "a3", "11/11/11 11:11:11", 7)
-            ],
-            newAnswer: createAnswer(4, null, "", "", "", 0),
+            answers: [],
+            newAnswer: createAnswer(null, null, "", "", "", 0),
             editedAnswer: createAnswer(null, null, "", "", "", null),
             editAnswerModalActive: false
         };
+    }
+
+    loadQuestionAnswers(questionId) {
+        return client.getQuestionAnswers(questionId).then((answers) => {
+            this.state = {
+                ...this.state,
+                answers: answers
+            };
+            this.emit("AnswerModelChange", this.state);
+        });
     }
 
     upvoteAnswer(answerId) {
@@ -46,13 +53,15 @@ class AnswerModel extends EventEmitter {
         this.emit("AnswerModelChange", this.state);
     }
 
-    addAnswer(id, questionId, author, text, creationDateTime, voteScore) {
-        this.state = {
-            ...this.state,
-            answers: this.state.answers.concat([createAnswer(id, questionId, author, text, creationDateTime, voteScore)]),
-            newAnswer: createAnswer(id + 1, null, "", "", "", 0)
-        };
-        this.emit("AnswerModelChange", this.state);
+    addAnswer(questionId, text) {
+        return client.addAnswer(questionId, text).then((answer) => {
+            this.state = {
+                ...this.state,
+                answers: this.state.answers.concat([answer]),
+                newAnswer: createAnswer(null, null, "", "", "", 0)
+            };
+            this.emit("AnswerModelChange", this.state);
+        });
     }
 
     activateEditAnswerModal(answer) {
@@ -83,13 +92,19 @@ class AnswerModel extends EventEmitter {
         this.emit("AnswerModelChange", this.state);
     }
 
-    editAnswer() {
-        this.state = {
-            ...this.state,
-            answers: this.state.answers.map(a => a.id === this.state.editedAnswer.id ? {...this.state.editedAnswer} : a),
-            editAnswerModalActive: false
-        };
-        this.emit("AnswerModelChange", this.state);
+    editAnswer(questionId, answerId, text) {
+        return client.editAnswer(questionId, answerId, text).then((answer) => {
+            if (answer === null) {
+                return false;
+            }
+            this.state = {
+                ...this.state,
+                answers: this.state.answers.map(a => a.id === answer.id ? {...answer} : a),
+                editAnswerModalActive: false
+            };
+            this.emit("AnswerModelChange", this.state);
+            return true;
+        });
     }
 
     deleteAnswer() {

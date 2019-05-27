@@ -75,14 +75,14 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testAddAnswer() throws InvalidQuestionIdException {
+    public void testAddAnswer() throws InvalidQuestionIdException, InvalidSOUserIdException {
         List<AnswerInfo> ail = answerService.getQuestionAnswers(2);
 
         Assert.assertEquals(1, ail.size());
     }
 
     @Test(expected = InvalidQuestionIdException.class)
-    public void testAddAnswerInvalidQuestionId() throws InvalidQuestionIdException {
+    public void testAddAnswerInvalidQuestionId() throws InvalidQuestionIdException, InvalidSOUserIdException {
         List<AnswerInfo> ail = answerService.getQuestionAnswers(999);
     }
 
@@ -95,15 +95,15 @@ public class IntegrationTests {
 
     @Test
     public void testEditAnswer() throws InvalidAnswerIdException, InvalidSOUserIdException {
-        Optional<Answer> answer = answerService.editAnswer(1, 1, "new answer text");
+        Optional<AnswerInfo> answer = answerService.editAnswer(1, 1, "new answer text");
 
         Assert.assertTrue(answer.isPresent());
-        Assert.assertEquals("new answer text", answer.get().getText());
+        Assert.assertEquals("new answer text", answer.get().getAnswer().getText());
     }
 
     @Test
     public void testEditAnswerByNonAuthor() throws InvalidAnswerIdException, InvalidSOUserIdException {
-        Optional<Answer> answer = answerService.editAnswer(2, 1, "new answer text");
+        Optional<AnswerInfo> answer = answerService.editAnswer(2, 1, "new answer text");
 
         Assert.assertFalse(answer.isPresent());
     }

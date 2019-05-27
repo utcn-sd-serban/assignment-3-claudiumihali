@@ -15,7 +15,7 @@ class FindSOUserByUsernameJdbc implements JdbcSpecification<SOUser> {
 
     @Override
     public String getSqlCommand() {
-        return "SELECT * FROM stack_overflow_user WHERE author=?";
+        return "SELECT * FROM stack_overflow_user WHERE username=?";
     }
 
     @Override

@@ -23,7 +23,7 @@ public class AnswerManagementService {
     private final SpecificationFactory specificationFactory;
 
     @Transactional
-    public Answer addAnswer(Integer questionId, Integer sOUserId, String text) throws InvalidQuestionIdException, InvalidSOUserIdException {
+    public AnswerInfo addAnswer(Integer questionId, Integer sOUserId, String text) throws InvalidQuestionIdException, InvalidSOUserIdException {
         Specification<Question> sq = specificationFactory.createFindQuestionById(questionId);
         List<Question> lq = repositoryFactory.createQuestionRepository().query(sq);
         if (lq.isEmpty())
@@ -36,11 +36,14 @@ public class AnswerManagementService {
 
         LocalDateTime creationDateTime = LocalDateTime.now();
 
-        return repositoryFactory.createAnswerRepository().save(new Answer(null, questionId, sOUserId, text, creationDateTime));
+        Answer a = repositoryFactory.createAnswerRepository().save(new Answer(null, questionId, sOUserId, text, creationDateTime));
+
+        return new AnswerInfo(a, lu.get(0).getUsername(), 0);
     }
 
     @Transactional
-    public Optional<AnswerVote> voteAnswer(Integer sOUserId, Integer answerId, VoteType voteType) throws InvalidSOUserIdException, InvalidAnswerIdException {
+    public Optional<AnswerVote> voteAnswer(Integer sOUserId, Integer answerId, VoteType voteType) throws InvalidSOUserIdException,
+            InvalidAnswerIdException {
         Specification<SOUser> su = specificationFactory.createFindSOUserById(sOUserId);
         List<SOUser> lu = repositoryFactory.createSOUserRepository().query(su);
         if (lu.isEmpty())
@@ -71,7 +74,7 @@ public class AnswerManagementService {
     }
 
     @Transactional
-    public List<AnswerInfo> getQuestionAnswers(Integer questionId) throws InvalidQuestionIdException {
+    public List<AnswerInfo> getQuestionAnswers(Integer questionId) throws InvalidQuestionIdException, InvalidSOUserIdException {
         List<AnswerInfo> ail = new ArrayList<>();
 
         Specification<Question> sq = specificationFactory.createFindQuestionById(questionId);
@@ -83,7 +86,13 @@ public class AnswerManagementService {
         List<Answer> la = repositoryFactory.createAnswerRepository().query(sa);
 
         Specification<AnswerVote> sav;
+        Specification<SOUser> su;
         for (Answer a : la) {
+            su = specificationFactory.createFindSOUserById(a.getSOUserId());
+            List<SOUser> lUser = repositoryFactory.createSOUserRepository().query(su);
+            if (lUser.isEmpty())
+                throw new InvalidSOUserIdException();
+
             sav = specificationFactory.createFindAnswerVotes(a.getId(), VoteType.UPVOTE);
             List<AnswerVote> lu = repositoryFactory.createAnswerVoteRepository().query(sav);
 
@@ -92,7 +101,7 @@ public class AnswerManagementService {
 
             Integer votes = lu.size() - ld.size();
 
-            ail.add(new AnswerInfo(a, votes));
+            ail.add(new AnswerInfo(a, lUser.get(0).getUsername(), votes));
         }
 
         ail.sort((ai1, ai2) -> ai2.getVotes() - ai1.getVotes());
@@ -101,7 +110,8 @@ public class AnswerManagementService {
     }
 
     @Transactional
-    public Optional<Answer> editAnswer(Integer sOUserId, Integer answerId, String newAnswerText) throws InvalidSOUserIdException, InvalidAnswerIdException {
+    public Optional<AnswerInfo> editAnswer(Integer sOUserId, Integer answerId, String newAnswerText) throws InvalidSOUserIdException,
+            InvalidAnswerIdException {
         Specification<SOUser> su = specificationFactory.createFindSOUserById(sOUserId);
         List<SOUser> lu = repositoryFactory.createSOUserRepository().query(su);
         if (lu.isEmpty())
@@ -115,8 +125,19 @@ public class AnswerManagementService {
         if (!sOUserId.equals(la.get(0).getSOUserId())) {
             return Optional.empty();
         } else {
-            repositoryFactory.createAnswerRepository().save(new Answer(answerId, null, null, newAnswerText, null));
-            return Optional.of(repositoryFactory.createAnswerRepository().query(sa).get(0));
+            Answer a = new Answer(la.get(0).getId(), la.get(0).getQuestionId(), la.get(0).getSOUserId(), newAnswerText, la.get(0).getCreationDateTime());
+
+            repositoryFactory.createAnswerRepository().save(a);
+
+            Specification<AnswerVote> sav = specificationFactory.createFindAnswerVotes(a.getId(), VoteType.UPVOTE);
+            List<AnswerVote> lup = repositoryFactory.createAnswerVoteRepository().query(sav);
+
+            sav = specificationFactory.createFindAnswerVotes(a.getId(), VoteType.DOWNVOTE);
+            List<AnswerVote> ldown = repositoryFactory.createAnswerVoteRepository().query(sav);
+
+            Integer votes = lup.size() - ldown.size();
+
+            return Optional.of(new AnswerInfo(a, lu.get(0).getUsername(), votes));
         }
     }
 

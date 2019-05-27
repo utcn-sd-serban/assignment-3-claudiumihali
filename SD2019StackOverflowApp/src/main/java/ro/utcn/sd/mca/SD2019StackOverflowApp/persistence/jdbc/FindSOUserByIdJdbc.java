@@ -28,6 +28,6 @@ class FindSOUserByIdJdbc implements JdbcSpecification<SOUser> {
     @Override
     public RowMapper getRowMapper() {
         return ((resultSet, i) -> new SOUser(resultSet.getInt("stack_overflow_user_id"),
-                resultSet.getString("author"), resultSet.getString("password")));
+                resultSet.getString("username"), resultSet.getString("password")));
     }
 }

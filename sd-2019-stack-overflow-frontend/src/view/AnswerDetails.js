@@ -10,15 +10,13 @@ const AnswerDetails = ( {answer, onUpvoteAnswer, onDownvoteAnswer, onEditAnswer}
         </figure>
         <div className="media-content">
             <div className="content">
-                <p>
-                    {answer.text}
-                    <br />
-                    <br />
-                    {
-                        // eslint-disable-next-line
-                        <small><a onClick={() => onUpvoteAnswer(answer.id)}>Up</a>  ·  <a onClick={() => onDownvoteAnswer(answer.id)}>Down</a>  ·  {answer.author}  ·  {answer.creationDateTime}</small>
-                    }
-                </p>
+                {answer.text}
+                <br />
+                <br />
+                {
+                    // eslint-disable-next-line
+                    <small><a onClick={() => onUpvoteAnswer(answer.id)}>Up</a>  ·  <a onClick={() => onDownvoteAnswer(answer.id)}>Down</a>  ·  {answer.author}  ·  {answer.creationDateTime}</small>
+                }
             </div>
         </div>
         <div className="media-right">

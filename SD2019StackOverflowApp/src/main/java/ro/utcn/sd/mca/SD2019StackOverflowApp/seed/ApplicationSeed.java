@@ -5,10 +5,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import ro.utcn.sd.mca.SD2019StackOverflowApp.entity.Question;
-import ro.utcn.sd.mca.SD2019StackOverflowApp.entity.QuestionTag;
-import ro.utcn.sd.mca.SD2019StackOverflowApp.entity.SOUser;
-import ro.utcn.sd.mca.SD2019StackOverflowApp.entity.Tag;
+import ro.utcn.sd.mca.SD2019StackOverflowApp.entity.*;
 import ro.utcn.sd.mca.SD2019StackOverflowApp.persistence.RepositoryFactory;
 
 import java.time.LocalDateTime;
@@ -21,7 +18,7 @@ public class ApplicationSeed implements CommandLineRunner {
 
     @Override
     @Transactional
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         SOUser u1 = repositoryFactory.createSOUserRepository().save(new SOUser(null, "u1", passwordEncoder.encode("u1")));
         SOUser u2 = repositoryFactory.createSOUserRepository().save(new SOUser(null, "u2", passwordEncoder.encode("u2")));
 
@@ -42,5 +39,13 @@ public class ApplicationSeed implements CommandLineRunner {
         QuestionTag qt4 = repositoryFactory.createQuestionTagRepository().save(new QuestionTag(null, q3.getId(), tag1.getId()));
         QuestionTag qt5 = repositoryFactory.createQuestionTagRepository().save(new QuestionTag(null, q3.getId(), tag2.getId()));
         QuestionTag qt6 = repositoryFactory.createQuestionTagRepository().save(new QuestionTag(null, q3.getId(), tag3.getId()));
+
+        Answer a1 = repositoryFactory.createAnswerRepository().save(new Answer(null, q1.getId(), u1.getId(), "a1", LocalDateTime.now()));
+        Answer a2 = repositoryFactory.createAnswerRepository().save(new Answer(null, q1.getId(), u2.getId(), "a2", LocalDateTime.now()));
+        Answer a3 = repositoryFactory.createAnswerRepository().save(new Answer(null, q2.getId(), u2.getId(), "a3", LocalDateTime.now()));
+        Answer a4 = repositoryFactory.createAnswerRepository().save(new Answer(null, q2.getId(), u2.getId(), "a4", LocalDateTime.now()));
+
+        AnswerVote av1 = repositoryFactory.createAnswerVoteRepository().save(new AnswerVote(null, u1.getId(), a2.getId(),
+                VoteType.UPVOTE.getDatabaseText()));
     }
 }

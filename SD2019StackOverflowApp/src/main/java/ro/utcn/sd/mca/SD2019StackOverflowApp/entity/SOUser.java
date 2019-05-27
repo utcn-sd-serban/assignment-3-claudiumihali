@@ -39,7 +39,7 @@ public class SOUser implements DatabaseEntity {
     @Override
     public Map<String, Object> getColumnFieldValueAssociations() {
         Map<String, Object> m = new LinkedHashMap<>();
-        m.put("author", username);
+        m.put("username", username);
         m.put("password", password);
         return m;
     }
