@@ -55,7 +55,8 @@ class QuestionListPresenter {
     }
 
     onFilterTag() {
-        questionModel.filterByTag();
+        var tagFilter = questionModel.state.tagFilter;
+        questionModel.filterByTag(tagFilter);
     }
 
     onClearFilterTag(index) {

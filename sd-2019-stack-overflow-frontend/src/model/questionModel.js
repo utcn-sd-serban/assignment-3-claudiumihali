@@ -129,21 +129,29 @@ class QuestionModel extends EventEmitter {
         this.emit("QuestionModelChange", this.state);
     }
 
-    filterByTag() {
-        this.state = {
-            ...this.state,
-            appliedTagFilters: this.state.appliedTagFilters.concat([this.state.tagFilter]),
-            tagFilter: ""
-        };
-        this.emit("QuestionModelChange", this.state);
+    filterByTag(tagFilter) {
+        var appliedTagFilters = this.state.appliedTagFilters.concat([tagFilter]);
+        return client.filterByTags(appliedTagFilters).then((questions) => {
+            this.state = {
+                ...this.state,
+                questions: questions,
+                appliedTagFilters: appliedTagFilters,
+                tagFilter: ""
+            };
+            this.emit("QuestionModelChange", this.state);
+        });
     }
 
     clearFilterByTag(index) {
-        this.state = {
-            ...this.state,
-            appliedTagFilters: this.state.appliedTagFilters.filter(t => t !== this.state.appliedTagFilters[index])
-        };
-        this.emit("QuestionModelChange", this.state);
+        var appliedTagFilters = this.state.appliedTagFilters.filter(t => t !== this.state.appliedTagFilters[index]);
+        return client.filterByTags(appliedTagFilters).then((questions) => {
+            this.state = {
+                ...this.state,
+                questions: questions,
+                appliedTagFilters: appliedTagFilters
+            };
+            this.emit("QuestionModelChange", this.state);
+        });
     }
 
     upvoteQuestion(questionId) {

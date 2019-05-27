@@ -66,6 +66,22 @@ class RestClient {
             }
         }).then(response => response.json());
     }
+
+    filterByTags(tagFilters) {
+        var tfs = "";
+        if (tagFilters.length !== 0) {
+            for (var i = 0; i < tagFilters.length - 1; i++) {
+                tfs = tfs.concat("tagFilters=" + tagFilters[i] + "&");
+            }
+            tfs = tfs.concat("tagFilters=" + tagFilters[i]);
+        }
+        return fetch(BASE_URL + "/questions?" + tfs, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(response => response.json());
+    }
 }
 
 const client = new RestClient();
