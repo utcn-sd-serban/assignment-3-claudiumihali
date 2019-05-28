@@ -6,18 +6,13 @@ import answerListPresenter from "../presenter/answerListPresenter";
 import SmartNavbar from "./SmartNavbar";
 import Footer from "./Footer";
 import AnswerList from "./AnswerList";
-import AskQuestionModal from "./AskQuestionModal";
 import EditAnswerModal from "./EditAnswerModal";
 
 const mapModelStateToComponentState = (questionModelState, answerModelState, props) => (
     {
         question: questionModelState.questions.filter(q => q.id === Number(props.match.params.questionId))[0],
-        answers: answerModelState.answers.filter(a => a.questionId === Number(props.match.params.questionId))
-            .sort(function(a1, a2) {return a2.voteScore - a1.voteScore;}),
+        answers: answerModelState.answers,
         newAnswer: answerModelState.newAnswer,
-        askQuestionModalActive: questionModelState.askQuestionModalActive,
-        newQuestion: questionModelState.newQuestion,
-        newTag: questionModelState.newTag,
         editAnswerModalActive: answerModelState.editAnswerModalActive,
         editedAnswer: answerModelState.editedAnswer
     }
@@ -48,23 +43,6 @@ export default class SmartAnswerList extends Component {
             <div>
                 <SmartNavbar />
                 {
-                    this.state.askQuestionModalActive === true
-                        ?
-                        <AskQuestionModal
-                            active={true}
-                            onCloseAskQuestionModal={questionListPresenter.onCloseAskQuestionModal}
-                            newQuestion={this.state.newQuestion}
-                            newTag={this.state.newTag}
-                            onChangeNewQuestionProperty={questionListPresenter.onChangeNewQuestionProperty}
-                            onChangeNewTag={questionListPresenter.onChangeNewTag}
-                            onCreateNewTag={questionListPresenter.onCreateNewTag}
-                            onDeleteNewTag={questionListPresenter.onDeleteNewTag}
-                            onCreateQuestion={answerListPresenter.onConfirmEditQuestion}
-                        />
-                        :
-                        <AskQuestionModal active={false} newQuestion={this.state.newQuestion} />
-                }
-                {
                     this.state.editAnswerModalActive === true
                     ?
                     <EditAnswerModal
@@ -89,7 +67,6 @@ export default class SmartAnswerList extends Component {
                     newAnswer={this.state.newAnswer}
                     onChangeNewAnswerText={answerListPresenter.onChangeNewAnswerText}
                     onCreateAnswer={answerListPresenter.onCreateAnswer}
-                    onEditQuestion={answerListPresenter.onEditQuestion}
                     onEditAnswer={answerListPresenter.onEditAnswer}
                 />
                 <Footer />

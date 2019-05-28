@@ -67,8 +67,10 @@ public class AnswerManagementService {
             if (answerVote.equals(voteType.getDatabaseText())) {
                 return Optional.empty();
             } else {
-                return Optional.of(repositoryFactory.createAnswerVoteRepository().save(new AnswerVote(lav.get(0).getId(), sOUserId, answerId,
-                        voteType.getDatabaseText())));
+                AnswerVote av = repositoryFactory.createAnswerVoteRepository().save(new AnswerVote(lav.get(0).getId(), sOUserId, answerId,
+                        voteType.getDatabaseText()));
+                AnswerVote x2 = new AnswerVote(av.getId(), av.getSOUserId(), av.getAnswerId(), av.getVoteType() + "x2");
+                return Optional.of(x2);
             }
         }
     }
@@ -156,7 +158,7 @@ public class AnswerManagementService {
         if (!sOUserId.equals(la.get(0).getSOUserId())) {
             return false;
         } else {
-            repositoryFactory.createAnswerRepository().remove(new Answer(answerId, null, null, null, null));
+            repositoryFactory.createAnswerRepository().remove(la.get(0));
             return true;
         }
     }

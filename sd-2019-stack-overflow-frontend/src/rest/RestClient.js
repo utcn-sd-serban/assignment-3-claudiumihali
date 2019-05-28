@@ -119,6 +119,50 @@ class RestClient {
             }
         });
     }
+
+    deleteAnswer(questionId, answerId) {
+        return fetch(BASE_URL + "/questions/" + questionId + "/answers/" + answerId, {
+            method: "DELETE",
+            headers: {
+                "Authorization": this.authorization,
+                "Content-Type": "application/json"
+            }
+        }).then(response => response.json());
+    }
+
+    voteQuestion(questionId, voteType) {
+        return fetch(BASE_URL + "/questions/" + questionId + "/votes", {
+            method: "POST",
+            body: JSON.stringify({voteType}),
+            headers: {
+                "Authorization": this.authorization,
+                "Content-Type": "application/json"
+            }
+        }).then(response => {
+            if (!response.ok) {
+                return null;
+            } else {
+                return response.json();
+            }
+        });
+    }
+
+    voteAnswer(questionId, answerId, voteType) {
+        return fetch(BASE_URL + "/questions/" + questionId + "/answers/" + answerId + "/votes", {
+            method: "POST",
+            body: JSON.stringify({voteType}),
+            headers: {
+                "Authorization": this.authorization,
+                "Content-Type": "application/json"
+            }
+        }).then(response => {
+            if (!response.ok) {
+                return null;
+            } else {
+                return response.json();
+            }
+        });
+    }
 }
 
 const client = new RestClient();

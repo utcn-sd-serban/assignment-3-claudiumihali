@@ -73,8 +73,10 @@ public class QuestionManagementService {
             if (userVote.equals(voteType.getDatabaseText())) {
                 return Optional.empty();
             } else {
-                return Optional.of(repositoryFactory.createQuestionVoteRepository().save(new QuestionVote(lqv.get(0).getId(), sOUserId, questionId,
-                        voteType.getDatabaseText())));
+                QuestionVote qv = repositoryFactory.createQuestionVoteRepository().save(new QuestionVote(lqv.get(0).getId(), sOUserId, questionId,
+                        voteType.getDatabaseText()));
+                QuestionVote x2 = new QuestionVote(qv.getId(), qv.getSOUserId(), qv.getQuestionId(), qv.getVoteType() + "x2");
+                return Optional.of(x2);
             }
         }
     }

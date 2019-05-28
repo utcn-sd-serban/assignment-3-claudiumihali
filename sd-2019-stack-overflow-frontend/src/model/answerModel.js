@@ -26,20 +26,34 @@ class AnswerModel extends EventEmitter {
         });
     }
 
-    upvoteAnswer(answerId) {
-        this.state = {
-            ...this.state,
-            answers: this.state.answers.map(a => a.id === answerId ? {...a, voteScore: a.voteScore + 1} : a)
-        };
-        this.emit("AnswerModelChange", this.state);
+    upvoteAnswer(questionId, answerId) {
+        return client.voteAnswer(questionId, answerId, "upvote").then((vote) => {
+            if (vote === null) {
+                return false;
+            }
+            this.state = {
+                ...this.state,
+                answers: this.state.answers.map(a => a.id === answerId ? {...a, voteScore:
+                    (vote.voteType === "upvotex2") ? a.voteScore + 2 : a.voteScore + 1} : a)
+            };
+            this.emit("AnswerModelChange", this.state);
+            return true;
+        });
     }
 
-    downvoteAnswer(answerId) {
-        this.state = {
-            ...this.state,
-            answers: this.state.answers.map(a => a.id === answerId ? {...a, voteScore: a.voteScore - 1} : a)
-        };
-        this.emit("AnswerModelChange", this.state);
+    downvoteAnswer(questionId, answerId) {
+        return client.voteAnswer(questionId, answerId, "downvote").then((vote) => {
+            if (vote === null) {
+                return false;
+            }
+            this.state = {
+                ...this.state,
+                answers: this.state.answers.map(a => a.id === answerId ? {...a, voteScore:
+                    (vote.voteType === "downvotex2") ? a.voteScore - 2 : a.voteScore - 1} : a)
+            };
+            this.emit("AnswerModelChange", this.state);
+            return true;
+        });
     }
 
     changeNewAnswerText(newText) {
@@ -107,13 +121,20 @@ class AnswerModel extends EventEmitter {
         });
     }
 
-    deleteAnswer() {
-        this.state = {
-            ...this.state,
-            answers: this.state.answers.filter(a => a.id !== this.state.editedAnswer.id),
-            editAnswerModalActive: false
-        };
-        this.emit("AnswerModelChange", this.state);
+    deleteAnswer(questionId, answerId) {
+        return client.deleteAnswer(questionId, answerId).then((bool) => {
+            if (bool.value === false) {
+                return false;
+            } else {
+                this.state = {
+                    ...this.state,
+                    answers: this.state.answers.filter(a => a.id !== answerId),
+                    editAnswerModalActive: false
+                };
+                this.emit("AnswerModelChange", this.state);
+                return true;
+            }
+        });
     }
 }
 

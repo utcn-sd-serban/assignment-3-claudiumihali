@@ -1,22 +1,29 @@
 import sOUserModel from "../model/sOUserModel";
-import questionModel from "../model/questionModel";
 import answerModel from "../model/answerModel";
 
 class AnswerListPresenter {
-    onUpvoteAnswer(answerId) {
+    onUpvoteAnswer(questionId, answerId) {
         if (sOUserModel.state.loggedInUsername === null) {
             window.alert("You must be logged in to vote answers!");
             return;
         }
-        answerModel.upvoteAnswer(answerId);
+        answerModel.upvoteAnswer(questionId, answerId).then((success) => {
+            if (!success) {
+                window.alert("You cannot vote your own answers or twice!");
+            }
+        });
     }
 
-    onDownvoteAnswer(answerId) {
+    onDownvoteAnswer(questionId, answerId) {
         if (sOUserModel.state.loggedInUsername === null) {
             window.alert("You must be logged in to vote answers!");
             return;
         }
-        answerModel.downvoteAnswer(answerId);
+        answerModel.downvoteAnswer(questionId, answerId).then((success) => {
+            if (!success) {
+                window.alert("You cannot vote your own answers or twice!");
+            }
+        });
     }
 
     onChangeNewAnswerText(newText) {
@@ -29,18 +36,6 @@ class AnswerListPresenter {
             return;
         }
         answerModel.addAnswer(questionId, answerModel.state.newAnswer.text);
-    }
-
-    onEditQuestion(question) {
-        if (sOUserModel.state.loggedInUsername === null) {
-            window.alert("You must be logged in to edit questions!");
-            return;
-        }
-        questionModel.activateEditQuestionModal(question);
-    }
-
-    onConfirmEditQuestion() {
-        questionModel.editQuestion();
     }
 
     onEditAnswer(answer) {
@@ -68,8 +63,13 @@ class AnswerListPresenter {
             });
     }
 
-    onDeleteAnswer() {
-        answerModel.deleteAnswer();
+    onDeleteAnswer(questionId) {
+        answerModel.deleteAnswer(questionId, answerModel.state.editedAnswer.id)
+            .then((success) => {
+                if (!success) {
+                    window.alert("You can delete only your own answers!");
+                }
+            });
     }
 }
 

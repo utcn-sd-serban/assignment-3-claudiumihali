@@ -2,7 +2,7 @@ import React from "react";
 import AnswerDetails from "./AnswerDetails";
 
 const AnswerList = ( {question, onUpvoteQuestion, onDownvoteQuestion, answers, onUpvoteAnswer, onDownvoteAnswer,
-    newAnswer, onChangeNewAnswerText, onCreateAnswer, onEditQuestion, onEditAnswer} ) => (
+    newAnswer, onChangeNewAnswerText, onCreateAnswer, onEditAnswer} ) => (
     <section className="container">
         <div className="box content">
             <article className="media">
@@ -39,6 +39,7 @@ const AnswerList = ( {question, onUpvoteQuestion, onDownvoteQuestion, answers, o
                             <AnswerDetails
                                 key={index}
                                 answer={answer}
+                                questionId={question.id}
                                 onUpvoteAnswer={onUpvoteAnswer}
                                 onDownvoteAnswer={onDownvoteAnswer}
                                 onEditAnswer={onEditAnswer}
@@ -47,13 +48,6 @@ const AnswerList = ( {question, onUpvoteQuestion, onDownvoteQuestion, answers, o
                         :
                         <article className="media"><p><strong>No answers yet.</strong></p></article>
                     }
-                </div>
-                <div className="media-right">
-                    <button className="button is-white" onClick={() => onEditQuestion(question)}>
-                        <span className="icon">
-                            <i className="fa fa-edit"></i>
-                        </span>
-                    </button>
                 </div>
             </article>
             <article className="media">

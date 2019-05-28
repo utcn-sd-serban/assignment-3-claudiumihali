@@ -69,7 +69,11 @@ class QuestionListPresenter {
             window.alert("You must be logged in to vote questions!");
             return;
         }
-        questionModel.upvoteQuestion(questionId);
+        questionModel.upvoteQuestion(questionId).then((success) => {
+            if (!success) {
+                window.alert("You cannot vote your own questions or twice!");
+            }
+        });
     }
 
     onDownvoteQuestion(questionId) {
@@ -77,7 +81,11 @@ class QuestionListPresenter {
             window.alert("You must be logged in to vote questions!");
             return;
         }
-        questionModel.downvoteQuestion(questionId);
+        questionModel.downvoteQuestion(questionId).then((success) => {
+            if (!success) {
+                window.alert("You cannot vote your own questions or twice!");
+            }
+        });
     }
 
     onExpandQuestion(questionId) {

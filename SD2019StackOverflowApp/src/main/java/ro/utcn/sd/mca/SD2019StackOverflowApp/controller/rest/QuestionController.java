@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ro.utcn.sd.mca.SD2019StackOverflowApp.controller.rest.command.*;
 import ro.utcn.sd.mca.SD2019StackOverflowApp.dto.QuestionDTO;
+import ro.utcn.sd.mca.SD2019StackOverflowApp.dto.QuestionVoteDTO;
 import ro.utcn.sd.mca.SD2019StackOverflowApp.service.QuestionManagementService;
 import ro.utcn.sd.mca.SD2019StackOverflowApp.service.SOUserManagementService;
 
@@ -31,5 +32,10 @@ public class QuestionController {
     @PostMapping("/questions")
     public Object addQuestion(@RequestBody QuestionDTO questionDTO) throws Exception {
         return invoker.invoke(new AddQuestionCommand(questionManagementService, sOUserManagementService, questionDTO));
+    }
+
+    @PostMapping("/questions/{questionId}/votes")
+    public Object voteQuestion(@PathVariable Integer questionId, @RequestBody QuestionVoteDTO questionVoteDTO) throws Exception {
+        return invoker.invoke(new VoteQuestionCommand(questionManagementService, sOUserManagementService, questionId, questionVoteDTO));
     }
 }

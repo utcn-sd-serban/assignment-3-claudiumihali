@@ -155,38 +155,33 @@ class QuestionModel extends EventEmitter {
     }
 
     upvoteQuestion(questionId) {
-        this.state = {
-            ...this.state,
-            questions: this.state.questions.map(q => q.id === questionId ? {...q, voteScore: q.voteScore + 1} : q)
-        };
-        this.emit("QuestionModelChange", this.state);
+        return client.voteQuestion(questionId, "upvote").then((vote) => {
+            if (vote === null) {
+                return false;
+            }
+            this.state = {
+                ...this.state,
+                questions: this.state.questions.map(q => q.id === questionId ? {...q, voteScore:
+                    (vote.voteType === "upvotex2") ? q.voteScore + 2 : q.voteScore + 1} : q)
+            };
+            this.emit("QuestionModelChange", this.state);
+            return true;
+        });
     }
 
     downvoteQuestion(questionId) {
-        this.state = {
-            ...this.state,
-            questions: this.state.questions.map(q => q.id === questionId ? {...q, voteScore: q.voteScore - 1} : q)
-        };
-        this.emit("QuestionModelChange", this.state);
-    }
-
-    activateEditQuestionModal(question) {
-        this.state = {
-            ...this.state,
-            newQuestion: {...question},
-            askQuestionModalActive: true
-        }
-        this.emit("QuestionModelChange", this.state);
-    }
-
-    editQuestion() {
-        this.state = {
-            ...this.state,
-            questions: this.state.questions.map(q => q.id === this.state.newQuestion.id ? {...this.state.newQuestion} : q),
-            newQuestion: createQuestion(this.state.questions[this.state.questions.length - 1].id + 1, "", "", "", "", [], 0),
-            askQuestionModalActive: false
-        }
-        this.emit("QuestionModelChange", this.state);
+        return client.voteQuestion(questionId, "downvote").then((vote) => {
+            if (vote === null) {
+                return false;
+            }
+            this.state = {
+                ...this.state,
+                questions: this.state.questions.map(q => q.id === questionId ? {...q, voteScore:
+                    (vote.voteType === "downvotex2") ? q.voteScore - 2 : q.voteScore - 1} : q)
+            };
+            this.emit("QuestionModelChange", this.state);
+            return true;
+        });
     }
 }
 

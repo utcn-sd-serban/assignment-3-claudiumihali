@@ -20,7 +20,7 @@ const EditAnswerModal = ( {active, onCloseEditAnswerModal, editedAnswer, onChang
             </section>
             <footer className="modal-card-foot">
                 <button className="button is-success" onClick={() => onConfirmEditAnswer(questionId)}>Edit</button>
-                <button className="button is-danger" onClick={() => onDeleteAnswer()}>Delete</button>
+                <button className="button is-danger" onClick={() => onDeleteAnswer(questionId)}>Delete</button>
             </footer>
         </div>
     </div>

@@ -40,4 +40,16 @@ public class ErrorHandler {
     public ErrorDTO handleCanEditOnlyOwnAnswersException(CanEditOnlyOwnAnswersException e) {
         return new ErrorDTO(e.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CannotVoteOwnQuestionsOrTwiceException.class)
+    public ErrorDTO handleCannotVoteOwnQuestionsOrTwiceException(CannotVoteOwnQuestionsOrTwiceException e) {
+        return new ErrorDTO(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CannotVoteOwnAnswersOrTwiceException.class)
+    public ErrorDTO handleCannotVoteOwnAnswersOrTwiceException(CannotVoteOwnAnswersOrTwiceException e) {
+        return new ErrorDTO(e.getMessage());
+    }
 }
