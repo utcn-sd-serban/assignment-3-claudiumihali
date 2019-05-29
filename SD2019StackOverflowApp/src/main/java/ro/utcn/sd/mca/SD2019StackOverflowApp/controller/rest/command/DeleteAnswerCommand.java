@@ -1,7 +1,8 @@
 package ro.utcn.sd.mca.SD2019StackOverflowApp.controller.rest.command;
 
 import lombok.RequiredArgsConstructor;
-import ro.utcn.sd.mca.SD2019StackOverflowApp.dto.BooleanDTO;
+import ro.utcn.sd.mca.SD2019StackOverflowApp.dto.AnswerDTO;
+import ro.utcn.sd.mca.SD2019StackOverflowApp.exception.CanDeleteOnlyOwnAnswersException;
 import ro.utcn.sd.mca.SD2019StackOverflowApp.exception.InvalidAnswerIdException;
 import ro.utcn.sd.mca.SD2019StackOverflowApp.exception.InvalidSOUserIdException;
 import ro.utcn.sd.mca.SD2019StackOverflowApp.service.AnswerManagementService;
@@ -14,7 +15,14 @@ public class DeleteAnswerCommand implements Command {
     private final Integer answerId;
 
     @Override
-    public BooleanDTO execute() throws InvalidAnswerIdException, InvalidSOUserIdException {
-        return BooleanDTO.ofEntity(answerManagementService.deleteAnswer(sOUserManagementService.loadCurrentSOUser().getId(), answerId));
+    public AnswerDTO execute() throws InvalidAnswerIdException, InvalidSOUserIdException, CanDeleteOnlyOwnAnswersException {
+        boolean success = answerManagementService.deleteAnswer(sOUserManagementService.loadCurrentSOUser().getId(), answerId);
+        if (success) {
+            AnswerDTO answerDTO = new AnswerDTO();
+            answerDTO.setId(answerId);
+            return answerDTO;
+        } else {
+            throw new CanDeleteOnlyOwnAnswersException();
+        }
     }
 }

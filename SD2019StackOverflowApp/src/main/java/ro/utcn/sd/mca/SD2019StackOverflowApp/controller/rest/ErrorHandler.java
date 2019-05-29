@@ -42,6 +42,12 @@ public class ErrorHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CanDeleteOnlyOwnAnswersException.class)
+    public ErrorDTO handleCanDeleteOnlyOwnAnswersException(CanDeleteOnlyOwnAnswersException e) {
+        return new ErrorDTO(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CannotVoteOwnQuestionsOrTwiceException.class)
     public ErrorDTO handleCannotVoteOwnQuestionsOrTwiceException(CannotVoteOwnQuestionsOrTwiceException e) {
         return new ErrorDTO(e.getMessage());

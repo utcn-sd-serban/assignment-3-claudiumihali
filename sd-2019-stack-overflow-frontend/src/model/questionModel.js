@@ -1,5 +1,6 @@
 import { EventEmitter } from "events";
 import client from "../rest/RestClient";
+import webSocketEmitter from "../ws/WebSocketEmitter";
 
 const createQuestion = (id, author, title, text, creationDateTime, tags, voteScore) => (
     {id, author, title, text, creationDateTime, tags, voteScore}
@@ -17,6 +18,17 @@ class QuestionModel extends EventEmitter {
             tagFilter: "",
             askQuestionModalActive: false
         };
+        webSocketEmitter.addListener("event", event => {
+            switch (event.type) {
+                case "QUESTION_ADDED":
+                    this.addQuestionLocal(event.dto);
+                    break;
+                case "QUESTION_VOTED":
+                    this.voteQuestionLocal(event.dto);
+                    break;
+                default:
+            }
+        });
     }
 
     loadQuestions() {
@@ -90,16 +102,18 @@ class QuestionModel extends EventEmitter {
         this.emit("QuestionModelChange", this.state);
     }
 
+    addQuestionLocal(question) {
+        this.state = {
+            ...this.state,
+            questions: [question].concat(this.state.questions),
+            newQuestion: createQuestion(null, "", "", "", "", [], 0),
+            askQuestionModalActive: false
+        };
+        this.emit("QuestionModelChange", this.state);
+    }
+
     addQuestion(title, text, tags) {
-        return client.addQuestion(title, text, tags).then((question) => {
-            this.state = {
-                ...this.state,
-                questions: [question].concat(this.state.questions),
-                newQuestion: createQuestion(null, "", "", "", "", [], 0),
-                askQuestionModalActive: false
-            };
-            this.emit("QuestionModelChange", this.state);
-        });
+        return client.addQuestion(title, text, tags);
     }
 
     changeTitleFilter(newValue) {
@@ -154,34 +168,43 @@ class QuestionModel extends EventEmitter {
         });
     }
 
+    voteQuestionLocal(vote) {
+        switch (vote.voteType) {
+            case "upvote":
+                this.state = {
+                    ...this.state,
+                    questions: this.state.questions.map(q => q.id === vote.questionId ? {...q, voteScore: q.voteScore + 1} : q)
+                };
+                break;
+            case "upvotex2":
+                this.state = {
+                    ...this.state,
+                    questions: this.state.questions.map(q => q.id === vote.questionId ? {...q, voteScore: q.voteScore + 2} : q)
+                };
+                break;
+            case "downvote":
+                this.state = {
+                    ...this.state,
+                    questions: this.state.questions.map(q => q.id === vote.questionId ? {...q, voteScore: q.voteScore - 1} : q)
+                };
+                break;
+            case "downvotex2":
+                this.state = {
+                    ...this.state,
+                    questions: this.state.questions.map(q => q.id === vote.questionId ? {...q, voteScore: q.voteScore - 2} : q)
+                };
+                break;
+            default:
+        }
+        this.emit("QuestionModelChange", this.state);
+    }
+
     upvoteQuestion(questionId) {
-        return client.voteQuestion(questionId, "upvote").then((vote) => {
-            if (vote === null) {
-                return false;
-            }
-            this.state = {
-                ...this.state,
-                questions: this.state.questions.map(q => q.id === questionId ? {...q, voteScore:
-                    (vote.voteType === "upvotex2") ? q.voteScore + 2 : q.voteScore + 1} : q)
-            };
-            this.emit("QuestionModelChange", this.state);
-            return true;
-        });
+        return client.voteQuestion(questionId, "upvote");
     }
 
     downvoteQuestion(questionId) {
-        return client.voteQuestion(questionId, "downvote").then((vote) => {
-            if (vote === null) {
-                return false;
-            }
-            this.state = {
-                ...this.state,
-                questions: this.state.questions.map(q => q.id === questionId ? {...q, voteScore:
-                    (vote.voteType === "downvotex2") ? q.voteScore - 2 : q.voteScore - 1} : q)
-            };
-            this.emit("QuestionModelChange", this.state);
-            return true;
-        });
+        return client.voteQuestion(questionId, "downvote");
     }
 }
 

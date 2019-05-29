@@ -127,7 +127,13 @@ class RestClient {
                 "Authorization": this.authorization,
                 "Content-Type": "application/json"
             }
-        }).then(response => response.json());
+        }).then(response => {
+            if (!response.ok) {
+                return null;
+            } else {
+                return response.json();
+            }
+        });
     }
 
     voteQuestion(questionId, voteType) {
